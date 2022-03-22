@@ -57,13 +57,27 @@ class gen():
         with open(f"{page}.md") as f:
             content = f.read()
         
+        page_old = page
+        readme = False
+
+        if page == "README":
+            page = "index"
+            readme = True
+
         with open(f"{page}.html", "w") as f:
-            exts = [TocExtension(), "fenced_code", "tables"]
+            exts = [
+                TocExtension(), "fenced_code", "tables",
+                "def_list", "footnotes", "codehilite"
+            ]
             #exts.append(settings().get(CONFIG, "extensions"))
             
             data = markdown.markdown(content, extensions=exts)
-            
+            page = page_old
             tags = self.get_tags(page)
-            data = f"{tags[0]}\n{data}\n{tags[1]}"
+
+            if not readme:
+                data = f"{tags[0]}\n{data}\n{tags[1]}"
+            else:
+                data = f"{tags[0]}\n{data}"
             
             f.write(data)
